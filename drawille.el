@@ -60,7 +60,7 @@ within the braille character at this position."
     (aset row super-x (push (list sub-x sub-y) cell))
     (aset drawille-matrix super-y row)))
 
-(defun drawille-global-to-local-coordinates (coordinates)
+(defun drawille-global-to-local-coordinates (&rest coordinates)
   "From global COORDINATES, return a matrix of local coordinates.
 It will initiallize `drawille-matrix' with greatests values from
 coordinates."
@@ -68,14 +68,26 @@ coordinates."
 	coordinates)
   drawille-matrix)
 
-(drawille-global-to-local-coordinates '((1 4) (2 1)))
 
-(defun drawille-coordinates-to-string (coordinates)
+(defun drawille-coordinates-to-string (&rest coordinates)
   "Convert COORDINATES to a string of braille characters."
-  ;; For each row return a string, for each cell of the row, return a
-  ;; char of the string.  Then join the strings together to return the
-  ;; unicode Drawille image.
+  ;; For each row return a string.
+  ;; For each cell of the row, return a char of the string.
+  ;; Then join the strings together to return the Drawille text.
+  (let* ((max-x (cl-loop for coordinate in coordinates
+  			 maximize (car coordinate)))
+  	 (max-y (cl-loop for coordinate in coordinates
+  			 maximize (cadr coordinate))))
+    (setq drawille-matrix (make-vector max-y (make-vector max-x nil)))
+    (apply 'drawille-global-to-local-coordinates coordinates)
+    drawille-matrix)
+
+  ;; (cl-loop for row across drawille-matrix)
   )
+
+(drawille-global-to-local-coordinates '(1 2) '(2 1))
+(defvar drawille-matrix [[nil nil][nil nil]])
+(drawille-coordinates-to-string '(1 2) '(5 1)'(5 1)'(5 1))
 
 (provide 'drawille)
 ;;; drawille.el ends here
