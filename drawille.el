@@ -44,7 +44,6 @@ two-dimensionnal vector."
 (drawille-coordinates-to-char '(0 0) '(1 0) '(1 1) '(1 2))
 
 (defvar drawille-matrix [[nil nil][nil nil]])
-(drawille-global-to-local-coordinate 3 5)
 
 (defun drawille-global-to-local-coordinate (x y)
   "Convert a table of X, Y coordinates to a set of local ones.
@@ -79,13 +78,13 @@ coordinates."
   	 (max-y (cl-loop for row in coordinates
   			 maximize (cadr row))))
     (setq drawille-matrix (make-vector max-y (make-vector max-x nil)))
-    (apply 'drawille-global-to-local-coordinates coordinates)
-    drawille-matrix))
+  (apply 'drawille-global-to-local-coordinates coordinates)
+  ;; drawille-matrix)
+  )
 
 (drawille-global-to-local-coordinates '(1 2) '(2 1))
 (defvar drawille-matrix [[nil nil][nil nil]])
-(drawille-coordinates-to-string '(0 0) '(9 0)
-;;				'(1 1)
+(drawille-coordinates-to-string '(1 2) '(2 1)) ;; '(0 0) '(9 0) '(1 1)
 				)
 
 (provide 'drawille)
