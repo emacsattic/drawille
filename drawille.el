@@ -43,14 +43,8 @@ two-dimensionnal vector."
 
 (drawille-coordinates-to-char '(0 0) '(1 0) '(1 1) '(1 2))
 
-(defun drawille-coordinates-to-string (coordinates)
-  "Convert COORDINATES to a string of braille characters."
-  ;; For each row return a string, for each cell of the row, return a
-  ;; char of the string.  Then join the strings together to return the
-  ;; unicode Drawille image.
-  )
-
-(defvar drawille-matrix [[1 2 3 4 5][1 2 3 4 5][1 2 3 4 5]])
+(defvar drawille-matrix [[nil nil][nil nil]])
+(drawille-global-to-local-coordinate 3 5)
 
 (defun drawille-global-to-local-coordinate (x y)
   "Convert a table of X, Y coordinates to a set of local ones.
@@ -60,14 +54,28 @@ within the braille character at this position."
   (let* ((super-x (floor x 2))
 	 (super-y (floor y 4))
 	 (row (aref drawille-matrix super-y))
+	 (cell (aref row super-x))
 	 (sub-x (% x 2))
-	 (sub-y (% y 4))
-	 (cell (cons sub-x sub-y)))
-    (aset row super-x cell)
-    (aset drawille-matrix super-y row)
-    drawille-matrix))
+	 (sub-y (% y 4)))
+    (aset row super-x (push (list sub-x sub-y) cell))
+    (aset drawille-matrix super-y row)))
 
-(drawille-global-to-local-coordinate 5 4)
+(defun drawille-global-to-local-coordinates (coordinates)
+  "From global COORDINATES, return a matrix of local coordinates.
+It will initiallize `drawille-matrix' with greatests values from
+coordinates."
+  (mapc (lambda (x) (apply 'drawille-global-to-local-coordinate x))
+	coordinates)
+  drawille-matrix)
+
+(drawille-global-to-local-coordinates '((1 4) (2 1)))
+
+(defun drawille-coordinates-to-string (coordinates)
+  "Convert COORDINATES to a string of braille characters."
+  ;; For each row return a string, for each cell of the row, return a
+  ;; char of the string.  Then join the strings together to return the
+  ;; unicode Drawille image.
+  )
 
 (provide 'drawille)
 ;;; drawille.el ends here
