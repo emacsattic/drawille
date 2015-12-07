@@ -74,20 +74,19 @@ coordinates."
   ;; For each row return a string.
   ;; For each cell of the row, return a char of the string.
   ;; Then join the strings together to return the Drawille text.
-  (let* ((max-x (cl-loop for coordinate in coordinates
-  			 maximize (car coordinate)))
-  	 (max-y (cl-loop for coordinate in coordinates
-  			 maximize (cadr coordinate))))
+  (let* ((max-x (cl-loop for row in coordinates
+  			 maximize (car row)))
+  	 (max-y (cl-loop for row in coordinates
+  			 maximize (cadr row))))
     (setq drawille-matrix (make-vector max-y (make-vector max-x nil)))
     (apply 'drawille-global-to-local-coordinates coordinates)
-    drawille-matrix)
-
-  ;; (cl-loop for row across drawille-matrix)
-  )
+    drawille-matrix))
 
 (drawille-global-to-local-coordinates '(1 2) '(2 1))
 (defvar drawille-matrix [[nil nil][nil nil]])
-(drawille-coordinates-to-string '(1 2) '(5 1)'(5 1)'(5 1))
+(drawille-coordinates-to-string '(0 0) '(9 0)
+;;				'(1 1)
+				)
 
 (provide 'drawille)
 ;;; drawille.el ends here
