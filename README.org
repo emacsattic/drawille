@@ -1,0 +1,6 @@
+#+title: Elisp Drawille
+Drawille library implementation in elisp.
+
+This is rather a experiment for me to get started with elisp an lisp in general.
+
+It may not use the most powerful and efficient lisp tools.  I tied to document the fariables correctly and keep everything as simle as I could.
