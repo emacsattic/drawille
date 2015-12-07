@@ -1,4 +1,4 @@
-#+title Elisp Drawille
+#+title: Elisp Drawille
 Drawille library implementation in elisp.
 
 This is rather a experiment for me to get started with elisp an lisp in general.
