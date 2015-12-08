@@ -75,12 +75,14 @@
   "Return a MATRIX filled until there are a multiple of 4 of rows."
   (let* ((width (length (aref matrix 0)))
 	 (height (length matrix)))
-    (vconcat
-     matrix
-     (make-vector (- 4 (% height 4))
-		  (make-vector width 0)))))
+    (if (= (% height 4) 0)
+	matrix
+      (vconcat
+       matrix
+       (make-vector (- 4 (% height 4))
+		    (make-vector width 0))))))
 
-(drawille-fill-matrix [[1 1] [1 1]])
+(drawille-fill-matrix [[1 1] [1 1] [1 1] [1 1]])
 
 (defun drawille-matrix (matrix)
   "Subdivises a MATRIX into a vectortransform a 3d MATRIX .
@@ -98,6 +100,7 @@ It will then call `drawille-char-at-pos' to fill rows, then columns."
 (drawille-matrix
  (drawille-fill-matrix
   [[0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
+   [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
    [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
    [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
    [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
