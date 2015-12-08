@@ -4,3 +4,47 @@ Drawille library implementation in elisp.
 This is rather a experiment for me to get started with elisp an lisp in general.
 
 It may not use the most powerful and efficient lisp tools.  I tied to document the fariables correctly and keep everything as simle as I could.
+
+* Principle
+
+I use a matrix as a canvas, for performance, and so that anything that can operate on a matric can also operate on that 
+
+```
+[[a0 a1 a2 a3 a4 a5] 
+ [b0 b1 b2 b3 b4 b5] 
+ [c0 c1 c2 c3 c4 c5] 
+ [d0 d1 d2 d3 d4 d5] 
+ [e0 e1 e2 e3 e4 e5] 
+ [f0 f1 f2 f3 f4 f5] 
+ [g0 g1 g2 g3 g4 g5] 
+ [h0 h1 h2 h3 h4 h5]]
+```
+
+And then, transforming it to this matrix of braille characters
+
+```
+[[[a0 a1   [a2 a3   [a4 a5  ╮
+   b0 b1  / b2 b3  / b4 b5  │ One braille
+   c0 c1 /  c2 c3 /  c4 c5  │ character
+   d0 d1]   d2 d3]   d4 d5]]╯ 
+ [[e0 e1   [e2 e3   [e4 e5   
+   f0 f1  / f2 f3  / f4 f5   
+   g0 g1 /  g2 g3 /  g4 g5   
+   h0 h1]   h2 h3]   h4 h5]]]
+```
+
+With the new matrix that can be written as:
+
+```
+[[[a0 a1 b0 b1 c0 c1 d0 d1] <- One braille character
+  [a2 a3 b2 b3 c2 c3 d2 d3]
+  [a4 a5 b4 b5 c4 c5 d4 d5]] <- One row of braille characters
+ [[e0 e1 f0 f1 g0 g1 h0 h1]
+  [e2 e3 f2 f3 g2 g3 h2 h3]
+  [e4 e5 f4 f5 g4 g5 h4 h5]]] <- Two row of braille characters
+```
+
+* Thanks
+To (IRC) #emacs@freenode.net, particularly:
+- `forcer` that for helping me finding what I could not find myself;
+- `wasamasa` for its interest into this project, bringing some motivation!
