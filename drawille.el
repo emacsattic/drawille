@@ -6,14 +6,14 @@
 
 ;; This will result into transforming a matrices:
 
-;; [[a0 a1 a2 a3 a4 a5]   [[[a0 a1   [a2 a3   [a4 a5  |<- One braille
-;;  [b0 b1 b2 b3 b4 b5]	  b0 b1  / b2 b3  / b4 b5  |   character
-;;  [c0 c1 c2 c3 c4 c5]	  c0 c1 /  c2 c3 /  c4 c5  |
-;;  [d0 d1 d2 d3 d4 d5]	  d0 d1]   d2 d3]   d4 d5]]
+;; [[a0 a1 a2 a3 a4 a5]   [[[a0 a1   [a2 a3   [a4 a5  ╮<- One braille
+;;  [b0 b1 b2 b3 b4 b5]      b0 b1  / b2 b3  / b4 b5  │   character
+;;  [c0 c1 c2 c3 c4 c5]      c0 c1 /  c2 c3 /  c4 c5  │
+;;  [d0 d1 d2 d3 d4 d5]      d0 d1]   d2 d3]   d4 d5]]╯
 ;;  [e0 e1 e2 e3 e4 e5]    [[e0 e1   [e2 e3   [e4 e5
-;;  [f0 f1 f2 f3 f4 f5]	  f0 f1  / f2 f3  / f4 f5
-;;  [g0 g1 g2 g3 g4 g5]	  g0 g1 /  g2 g3 /  g4 g5
-;;  [h0 h1 h2 h3 h4 h5]]	  h0 h1]   h2 h3]   h4 h5]]]
+;;  [f0 f1 f2 f3 f4 f5]      f0 f1  / f2 f3  / f4 f5
+;;  [g0 g1 g2 g3 g4 g5]      g0 g1 /  g2 g3 /  g4 g5
+;;  [h0 h1 h2 h3 h4 h5]]     h0 h1]   h2 h3]   h4 h5]]]
 
 ;; Which is more correctly written as:
 
@@ -48,6 +48,8 @@
     (char-to-string
      (apply '+ drawille-braille-unicode-offset char-codes))))
 
+(drawille-vector-to-char [0 0 1 1 0 0 1 0])
+
 (defun drawille-char-at-pos (matrix x y)
   "Return a braille char corresponding to MATRIX at X, Y."
   (let (sub-matrix)
@@ -58,9 +60,9 @@
 		      (vector (aref (aref matrix (+ x i)) (+ y j)))))))
     (drawille-vector-to-char sub-matrix)))
 
-(drawille-vector-to-char [0 0 1 1 0 0 1 0])
+(drawille-char-at-pos [[0 0 1][0 0 1][0 0 1][0 0 1][1 1 1][1 1 1]] 1 0)
 
-(setq grid [[a0 a1 a2 a3 a4 a5]
+(setq grid [[a0 a1 a2 a3 a4 a5]		;For debugging
 	    [b0 b1 b2 b3 b4 b5]
 	    [c0 c1 c2 c3 c4 c5]
 	    [d0 d1 d2 d3 d4 d5]
@@ -69,11 +71,7 @@
 	    [g0 g1 g2 g3 g4 g5]
 	    [h0 h1 h2 h3 h4 h5]])
 
-(setq my-matrix )
-
-(drawille-char-at-pos [[0 0 1][0 0 1][0 0 1][0 0 1][1 1 1][1 1 1]] 1 0)
-
-(defun drawille-walk-matrix (matrix)
+(defun drawille-matrix (matrix)
   "Subdivises a MATRIX into a vectortransform a 3d MATRIX .
 It will then call `drawille-char-at-pos' to fill rows, then columns."
   (let ((width (length (aref matrix 0)))
@@ -86,22 +84,26 @@ It will then call `drawille-char-at-pos' to fill rows, then columns."
       (setq result (concat result "\n")))
     result))
 
-(drawille-walk-matrix [[1 0 1 0 1 0 1 0]
-		       [0 1 0 1 0 1 0 1]
-		       [1 0 1 0 1 0 1 0]
-		       [0 1 0 1 0 1 0 0]
-		       [1 1 1 1 1 1 1 1]
-		       [1 1 1 0 0 1 1 1]
-		       [1 1 0 0 0 0 1 1]
-		       [1 0 0 0 0 0 0 1]
-		       [1 0 0 0 0 0 0 1]
-		       [1 0 0 0 0 0 0 1]
-		       [1 0 0 0 0 0 0 1]
-		       [1 0 0 0 0 0 0 1]
-		       [1 0 0 0 0 0 0 1]
-		       [1 1 0 0 0 0 1 1]
-		       [1 1 1 0 0 1 1 1]
-		       [1 1 1 1 1 1 1 1]])
+(drawille-matrix [
+		  [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
+		  [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
+		  [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
+		  [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
+		  [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
+		  [0 1 1 1 0 0 1 1 1 0 0 0 1 1 1 0 0 1 1 1 0 0 ]
+		  [0 1 1 0 0 0 0 1 1 0 0 0 1 1 0 0 0 0 1 1 0 0 ]
+		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+		  [0 1 1 0 0 0 0 1 1 0 0 0 1 1 0 0 0 0 1 1 0 0 ]
+		  [0 1 1 1 0 0 1 1 1 0 0 0 1 1 1 0 0 1 1 1 0 0 ]
+		  [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]])
 
   (provide 'drawille)
 ;;; drawille.el ends here
