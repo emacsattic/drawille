@@ -29,7 +29,7 @@
 
 ;;; Code:
 
-(message "%s" #o24174)
+(require 'cl)
 
 (defconst drawille-braille-unicode-offset #x2800
   "Offeset to reach the first braille char in unicode encoding.")
@@ -71,6 +71,17 @@
 	    [g0 g1 g2 g3 g4 g5]
 	    [h0 h1 h2 h3 h4 h5]])
 
+(defun drawille-fill-matrix (matrix)
+  "Return a MATRIX filled until there are a multiple of 4 of rows."
+  (let* ((width (length (aref matrix 0)))
+	 (height (length matrix)))
+    (vconcat
+     matrix
+     (make-vector (- 4 (% height 4))
+		  (make-vector width 0)))))
+
+(drawille-fill-matrix [[1 1] [1 1]])
+
 (defun drawille-matrix (matrix)
   "Subdivises a MATRIX into a vectortransform a 3d MATRIX .
 It will then call `drawille-char-at-pos' to fill rows, then columns."
@@ -84,26 +95,27 @@ It will then call `drawille-char-at-pos' to fill rows, then columns."
       (setq result (concat result "\n")))
     result))
 
-(drawille-matrix [
-		  [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
-		  [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
-		  [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
-		  [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
-		  [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
-		  [0 1 1 1 0 0 1 1 1 0 0 0 1 1 1 0 0 1 1 1 0 0 ]
-		  [0 1 1 0 0 0 0 1 1 0 0 0 1 1 0 0 0 0 1 1 0 0 ]
-		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
-		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
-		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
-		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
-		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
-		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
-		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
-		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
-		  [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
-		  [0 1 1 0 0 0 0 1 1 0 0 0 1 1 0 0 0 0 1 1 0 0 ]
-		  [0 1 1 1 0 0 1 1 1 0 0 0 1 1 1 0 0 1 1 1 0 0 ]
-		  [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]])
+(drawille-matrix
+ (drawille-fill-matrix
+  [[0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
+   [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
+   [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
+   [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
+   [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]
+   [0 1 1 1 0 0 1 1 1 0 0 0 1 1 1 0 0 1 1 1 0 0 ]
+   [0 1 1 0 0 0 0 1 1 0 0 0 1 1 0 0 0 0 1 1 0 0 ]
+   [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+   [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+   [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+   [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+   [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+   [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+   [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+   [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+   [0 1 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0 0 ]
+   [0 1 1 0 0 0 0 1 1 0 0 0 1 1 0 0 0 0 1 1 0 0 ]
+   [0 1 1 1 0 0 1 1 1 0 0 0 1 1 1 0 0 1 1 1 0 0 ]
+   [0 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1 0 0 ]]))
 
-  (provide 'drawille)
+(provide 'drawille)
 ;;; drawille.el ends here
