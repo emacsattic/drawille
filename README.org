@@ -1,4 +1,4 @@
-#+title: ⢸⣭⡁⣇⡀⡇⣚⡭⢸⢸⠭⠂⠀⣏⡱⢸⠭⡂⡮⢵⠸⡰⡸⢸⢸⣀⢸⣀⢸⣭⡁⠀⠀⠀⠀
+#+title: =⢸⣭⡁⣇⡀⡇⣚⡭⢸⢸⠭⠂⠀⣏⡱⢸⠭⡂⡮⢵⠸⡰⡸⢸⢸⣀⢸⣀⢸⣭⡁=
 
 Drawille library implementation in elisp.
 
