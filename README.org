@@ -1,4 +1,4 @@
-#+title: =⢸⣭⡁⣇⡀⡇⣚⡭⢸⢸⠭⠂⠀⣏⡱⢸⠭⡂⡮⢵⠸⡰⡸⢸⢸⣀⢸⣀⢸⣭⡁=
+#+title: =⢸⣭⡁⣇⡀⡇⣚⡭⢸⠭⠂⠀⣏⡱⢸⠭⡂⡮⢵⠸⡰⡸⢸⢸⣀⢸⣀⢸⣭⡁=
 
 [[https://github.com/asciimoo/drawille][Drawille]] library implementation in elisp.
 
