@@ -1,9 +1,4 @@
-#+title: Elisp Drawille
-
-#+begin_src
-⡏⠉⠉⡆⡖⠒⢢⢀⠔⠢⡀⡆⠀⢰⢰⢰⠀⠀⠀⡆⠀⠀⢰⣒⣒⠂ 
-⠧⠤⠤⠃⠏⠉⠣⠸⠉⠉⠇⠗⠉⠺⠸⠸⠤⠤⠄⠧⠤⠤⠸⠤⠤⠄
-#+end_src
+#+title: ⢸⣭⡁⣇⡀⡇⣚⡭⢸⢸⠭⠂⠀⣏⡱⢸⠭⡂⡮⢵⠸⡰⡸⢸⢸⣀⢸⣀⢸⣭⡁⠀⠀⠀⠀
 
 Drawille library implementation in elisp.
 
