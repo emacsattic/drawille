@@ -157,6 +157,8 @@ With the new matrix that can be written as:
 #+end_example
 
 * Thanks
+To the original drawille authors for the idea and building everything, as well as all the others that made a Drawille implementation.
+
 To (IRC) #emacs@freenode.net, particularly:
 - /forcer/ that for helping me finding what I could not find myself;
 - /wasamasa/ for its interest into this project, bringing some motivation!
