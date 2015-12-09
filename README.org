@@ -1,4 +1,8 @@
 #+title: Elisp Drawille
+
+⡏⠉⠉⡆⡖⠒⢢⢀⠔⠢⡀⡆⠀⢰⢰⢰⠀⠀⠀⡆⠀⠀⢰⣒⣒⠂
+⠧⠤⠤⠃⠏⠉⠣⠸⠉⠉⠇⠗⠉⠺⠸⠸⠤⠤⠄⠧⠤⠤⠸⠤⠤⠄
+
 Drawille library implementation in elisp.
 
 This is rather a experiment for me to get started with elisp an lisp in general.
@@ -119,8 +123,6 @@ With the new matrix that can be written as:
 (drawille-string (buffer-string) 80)
 #+end_src
 
-#+results:
-
 #+begin_example
 ⣛⣛⢛⡛⣘⣛⣛⢚⢙⣛⣛⣓⣒⡒⣒⡂⣒⢐⡒⣒⡂⣀⣀⣀⡀⣀⣀⢀⣀⣀⢀⡀⣀⣀⢀⡀⣀⣀⣀⣀
 ⡒⣐⣒⣐⣒⡐⠒⠐⠒⠐⠒⠂⠒⠒⠒⠒⠐⠒⠐⠒⠒⠒⠒⠐⠒⠂⠒⠒⠒⠀⠂⠒⠒⠐⠂⠒⠒⠒⠒⠐
@@ -159,5 +161,5 @@ With the new matrix that can be written as:
 
 * Thanks
 To (IRC) #emacs@freenode.net, particularly:
-- `forcer` that for helping me finding what I could not find myself;
-- `wasamasa` for its interest into this project, bringing some motivation!
+- /forcer/ that for helping me finding what I could not find myself;
+- /wasamasa/ for its interest into this project, bringing some motivation!
