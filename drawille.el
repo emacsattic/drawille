@@ -31,12 +31,20 @@
 
 ;; This is an experimental drawille implementation im emacs lisp.
 
+;; Drawille is a library originally written in python that permit to
+;; use graphics in text environment using the braille characters as a
+;; canvas smaller than a character (2x8 dots per characters).
+
+;; It is not complete, but yet works, with a `drawille-buffer' command
+;; that transforms the buffer into a small representation of its
+;; content.
+
 ;; This will result into transforming a matrices:
 
 ;; [[a0 a1 a2 a3 a4 a5]   [[[a0 a1   [a2 a3   [a4 a5   \
 ;;  [b0 b1 b2 b3 b4 b5]      b0 b1  / b2 b3  / b4 b5   |<- One braille
 ;;  [c0 c1 c2 c3 c4 c5]      c0 c1 /  c2 c3 /  c4 c5   |   character
-;;  [d0 d1 d2 d3 d4 d5]      d0 d1]   d2 d3]   d4 d5]] /
+;;  [d0 d1 d2 d3 d4 d5] =>    d0 d1]   d2 d3]   d4 d5]] /
 ;;  [e0 e1 e2 e3 e4 e5]    [[e0 e1   [e2 e3   [e4 e5
 ;;  [f0 f1 f2 f3 f4 f5]      f0 f1  / f2 f3  / f4 f5
 ;;  [g0 g1 g2 g3 g4 g5]      g0 g1 /  g2 g3 /  g4 g5
@@ -149,38 +157,36 @@ columns."
   "On a DRAWILLE-STRING, update a drawille character at ROW, COLUMN."
   (let* ((grid (apply 'vector (split-string drawille-string "\n")))
 	 (target-row (aref grid (floor row 4)))
-	 (char (aref target-row (floor column 2)))
-	 (vector (drawille-char-to-vector char)))
+	 (vector (drawille-char-to-vector
+		  (aref target-row (floor column 2)))))
     (aset vector (+ (* 2 (% row 4)) (% column 2)) 1)
     (aset target-row (floor column 2) (drawille-vector-to-char vector))
     (mapconcat 'concat grid "\n")))
 
 (drawille-draw-dot
  (drawille-matrix
-  [[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0]
-   [0 0 0 1 1 1 1 0 0 0 0 0 0 0 1 1 1 1 0 0 0]
-   [0 0 1 1 0 0 1 1 0 0 0 0 0 1 1 0 0 1 1 0 0]
-   [1 0 1 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 1 0 0]
-   [0 1 0 0 0 0 0 1 1 0 0 0 1 0 0 0 0 0 1 1 0]
-   [0 1 0 0 0 0 1 0 1 1 1 1 1 0 0 0 0 1 0 1 0]
-   [0 1 0 0 0 1 0 0 1 1 0 1 1 0 0 0 1 0 0 1 0]
-   [0 1 0 0 1 1 0 0 1 0 0 0 1 0 0 1 1 0 0 1 0]
-   [0 1 0 0 1 0 0 0 1 0 0 0 1 0 0 1 0 0 0 1 0]
-   [0 1 0 1 0 0 0 0 1 0 0 0 1 0 1 0 0 0 0 1 0]
-   [0 1 1 0 0 0 0 0 1 0 0 0 1 1 0 0 0 0 0 1 0]
-   [0 0 1 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 1 0 0]
-   [0 0 1 1 0 0 1 1 0 0 0 0 0 1 1 0 0 1 1 0 0]
-   [0 0 0 1 1 1 1 0 0 0 0 0 0 0 1 1 1 1 0 0 0]]) 3 1)
+  [[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0]
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0]
+   [0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0]
+   [0 0 1 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 1 1 1 1 0 0 0]
+   [0 0 0 1 0 0 1 1 0 0 1 1 0 0 0 0 0 1 1 0 0 1 1 0 0]
+   [0 0 0 0 1 0 1 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 1 0 0]
+   [0 0 0 0 0 1 0 0 0 0 0 1 1 0 0 0 1 0 0 0 0 0 1 1 0]
+   [0 0 0 0 0 1 0 0 0 0 1 0 1 1 1 1 1 0 0 0 0 1 0 1 0]
+   [0 0 0 0 0 1 0 0 0 1 0 0 1 1 0 1 1 0 0 0 1 0 0 1 0]
+   [0 0 0 0 0 1 0 0 1 1 0 0 1 0 0 0 1 0 0 1 1 0 0 1 0]
+   [0 0 0 0 0 1 0 0 1 0 0 0 1 0 0 0 1 0 0 1 0 0 0 1 0]
+   [0 0 0 0 0 1 0 1 0 0 0 0 1 0 0 0 1 0 1 0 0 0 0 1 0]
+   [0 0 0 0 0 1 1 0 0 0 0 0 1 0 0 0 1 1 0 0 0 0 0 1 0]
+   [0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 1 0 0]
+   [0 0 0 0 0 0 1 1 0 0 1 1 0 0 0 0 0 1 1 0 0 1 1 0 0]
+   [0 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 1 1 1 1 0 0 0]]) 3 1)
 
 ;; TODO Truncate the string if it overflow or automatically detect the
 ;; size if no column argument is given
