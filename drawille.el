@@ -79,7 +79,7 @@
 	   for offset across drawille-braille-table collect
 	   (* dot offset)
 	   into offsets finally return
-	    (apply '+ drawille-braille-unicode-offset offsets)))
+	   (apply '+ drawille-braille-unicode-offset offsets)))
 
 (drawille-vector-to-char [0 1 1 1 0 0 0 0])
 
@@ -131,39 +131,35 @@ columns."
 		      (drawille-vector-at-pos matrix (* 4 i) (* 2 j))))
 		    into line finally return (concat line "\n"))))
 
-(defun drawille-grid (drawille-string row column)
-  "Format a DRAWILLE-STRING  into a vector of strings (the grid).
+(defun drawille-grid (drawille row column)
+  "Format a DRAWILLE string  into a vector of strings (the grid).
 Its size may be adjusted if so that a dot at (ROW, COLUMN) can be
 displayed."
-  (let* ((grid (apply 'vector (split-string drawille-string "\n" t)))
+  (let* ((grid (apply 'vector (split-string drawille "\n" t)))
 	 (width (length (aref grid 0)))
 	 (height (length grid)))
     (when (> (1+ column) (* 2 width))
-      (setq
-       grid
-       (cl-loop for grid-row across grid vconcat
-		(vector (concat grid-row
-				(make-string (1+ (- (floor column 2)
-						    width))
-					     #x2800))))))
+      (setq grid
+	    (cl-loop for grid-row across grid vconcat
+		     (vector (concat grid-row
+				     (make-string
+				      (1+ (- (floor column 2) width))
+				      #x2800))))))
     (when (> (1+ row) (* 4 height))
-      (setq
-       grid
-       (vconcat
-	(cl-loop for i from 0 to (- (floor row 4) height)
-		 vconcat
-		 (vector (make-string (length (aref grid 0))
-				      #x2800)))
-	grid)))
+      (setq grid
+	    (vconcat
+	     (cl-loop for i from 0 to (- (floor row 4) height) vconcat
+		      (vector (make-string (length (aref grid 0))
+					   #x2800)))
+	     grid)))
     grid))
 
-(drawille-draw-dot "⠀⠀" 4 3)
-
-(defun drawille-draw-dot (drawille-string x y)
-  "On a DRAWILLE-STRING, update a drawille character at X, Y.
-Coordinates starts at 0, it can accept floats, and coordinates can go outside the length of the current matrix."
+(defun drawille-draw-dot (drawille x y)
+  "On a DRAWILLE string, update a drawille character at X, Y.
+Coordinates starts at 0 at the bottom left, it can accept floats,
+but not negative cordinates.  Although, they can overflow at the rigt and at the top of the current matrix."
   (let* ((n-x (round x)) (n-y (round y))
-	 (grid (drawille-grid drawille-string n-y n-x))
+	 (grid (drawille-grid drawille n-y n-x))
 	 (inverted-y (- (* 4 (length grid)) n-y 1)) ;Row to ordinate
 	 (grid-row (aref grid (floor inverted-y 4)))
 	 (vector (drawille-char-to-vector
@@ -171,6 +167,28 @@ Coordinates starts at 0, it can accept floats, and coordinates can go outside th
     (aset vector (+ (* 2 (% inverted-y 4)) (% n-x 2)) 1)
     (aset grid-row (floor n-x 2) (drawille-vector-to-char vector))
     (mapconcat 'concat grid "\n")))
+
+(defun drawille-draw-line (drawille x1 y1 x2 y2)
+  "On a DRAWILLE string, draw a line from X1, Y1 to X2, Y2."
+  (let ((x-offset (- x2 x1))
+	(y-offset (- y2 y1)))
+    (when (>= x-offset y-offset)
+      (cl-loop for x from 0 to x-offset do
+	       (setq drawille (drawille-draw-dot
+			       drawille
+			       (+ x1 x)
+			       (+ y1 (* x (/ (float y-offset)
+                                             (float x-offset))))))
+	       finally return drawille))
+    (when (> y-offset x-offset)
+      (cl-loop for y from 0 to y-offset do
+	       (setq drawille (drawille-draw-dot
+			       drawille
+			       (+ x1 (* y (/ (float x-offset)
+                                             (float y-offset))))
+			       (+ y1 y)))
+	       finally return drawille))
+    drawille))
 
 ;; TODO Truncate the string if it overflow or automatically detect the
 ;; size if no column argument is given
@@ -180,7 +198,7 @@ Coordinates starts at 0, it can accept floats, and coordinates can go outside th
 	   (substring
 	    (concat string (when (< (length string) column)
 			     (make-string (- column (length string))
-                                          0 )))
+                                          0)))
             0 column)))
 
 (defun drawille-string (string column)
