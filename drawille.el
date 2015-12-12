@@ -172,22 +172,26 @@ but not negative cordinates.  Although, they can overflow at the rigt and at the
   "On a DRAWILLE string, draw a line from X1, Y1 to X2, Y2."
   (let ((x-offset (- x2 x1))
 	(y-offset (- y2 y1)))
-    (when (>= x-offset y-offset)
-      (cl-loop for x from 0 to x-offset do
-	       (setq drawille (drawille-draw-dot
-			       drawille
-			       (+ x1 x)
-			       (+ y1 (* x (/ (float y-offset)
-                                             (float x-offset))))))
-	       finally return drawille))
-    (when (> y-offset x-offset)
-      (cl-loop for y from 0 to y-offset do
-	       (setq drawille (drawille-draw-dot
-			       drawille
-			       (+ x1 (* y (/ (float x-offset)
-                                             (float y-offset))))
-			       (+ y1 y)))
-	       finally return drawille))
+    (when (>= (abs x-offset) (abs y-offset))
+      (dolist (x (number-sequence 0 x-offset (signum x-offset)))
+        (setq drawille (drawille-draw-dot
+                        drawille
+                        (+ x1 x)
+                        (+ y1 (if (or (equal 0 x-offset)
+				      (equal 0 y-offset))
+				  0
+				(* x (/ (float y-offset)
+					(float x-offset)))))))))
+    (when (> (abs y-offset) (abs x-offset))
+      (dolist (y (number-sequence 0 y-offset (signum y-offset)))
+        (setq drawille (drawille-draw-dot
+                        drawille
+                        (+ x1 (if (or (equal 0 x-offset)
+                                      (equal 0 y-offset))
+                                  0
+                                (* y (/ (float x-offset)
+                                        (float y-offset)))))
+                        (+ y1 y)))))
     drawille))
 
 ;; TODO Truncate the string if it overflow or automatically detect the
