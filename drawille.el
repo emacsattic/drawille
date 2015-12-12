@@ -76,8 +76,8 @@
 (defun drawille-vector-to-char (vector)
   "Translate a VECTOR to a corresponding braille character."
   (cl-loop for dot across vector
-	   for offset across drawille-braille-table
-	   collect (* dot offset)
+	   for offset across drawille-braille-table collect
+	   (* dot offset)
 	   into offsets finally return
 	    (apply '+ drawille-braille-unicode-offset offsets)))
 
@@ -125,45 +125,11 @@ columns."
 	   with height = (length matrix)
 	   for i from 0 to (1- (floor height 4))
 	   concat
-	   (cl-loop for j from 0 to (1- (floor width 2))
-		    concat
+	   (cl-loop for j from 0 to (1- (floor width 2)) concat
 		    (char-to-string
 		     (drawille-vector-to-char
-		     (drawille-vector-at-pos matrix (* 4 i) (* 2 j))))
+		      (drawille-vector-at-pos matrix (* 4 i) (* 2 j))))
 		    into line finally return (concat line "\n"))))
-
-(drawille-matrix
- [[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-  [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-  [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-  [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-  [0 0 0 1 1 1 1 0 0 0 0 0 1 1 1 1 1 1 1 1 0]
-  [0 0 1 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 1 1 0]
-  [0 0 1 1 0 0 1 1 0 0 0 0 1 1 1 0 0 1 1 1 0]
-  [0 1 1 0 0 0 0 1 1 0 0 0 1 1 0 0 0 0 1 1 0]
-  [0 1 0 0 0 0 0 1 1 0 0 0 1 0 0 0 0 0 0 1 0]
-  [0 1 0 0 0 0 1 1 1 0 0 0 1 0 0 0 0 0 0 1 0]
-  [0 1 0 0 0 1 1 0 1 0 0 0 1 0 0 1 1 0 0 1 0]
-  [0 1 0 0 1 1 0 0 1 0 0 0 1 0 0 1 1 0 0 1 0]
-  [0 1 0 1 1 0 0 0 1 0 0 0 1 0 0 1 1 0 0 1 0]
-  [0 1 1 1 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0]
-  [0 1 1 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 1 0]
-  [0 0 1 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 1 0 0]
-  [0 0 1 1 0 0 1 1 0 0 0 0 0 1 1 0 0 1 1 0 0]
-  [0 0 0 1 1 1 1 0 0 0 0 0 0 0 1 1 1 1 0 0 0]])
-
-(defun drawille-draw-dot (drawille-string x y)
-  "On a DRAWILLE-STRING, update a drawille character at X, Y."
-  (let* ((grid (apply 'vector (split-string drawille-string "\n" t)))
-	 (inverted-y (- (* 4 (length grid)) y 1)) ;Row to ordinate
-	 (row (aref grid (floor inverted-y 4)))
-	 (vector (drawille-char-to-vector
-		  (aref row (floor x 2)))))
-    (aset vector (+ (* 2 (% inverted-y 4)) (% x 2)) 1)
-    (aset row (floor x 2) (drawille-vector-to-char vector))
-    (mapconcat 'concat grid "\n")))
-
-(setq my-grid (drawille-draw-dot my-grid 3 3))
 
 (setq my-grid
  (drawille-matrix
@@ -190,12 +156,51 @@ columns."
    [0 0 0 0 0 0 1 1 0 0 1 1 0 0 0 0 0 1 1 0 0 1 1 0 0]
    [0 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 1 1 1 1 0 0 0]]))
 
+(defun drawille-grid (drawille-string row column)
+  "Format a DRAWILLE-STRING  into a vector of strings (the grid).
+Its size may be adjusted if so that a dot at (ROW, COLUMN) can be
+displayed."
+  (let* ((grid (apply 'vector (split-string drawille-string "\n" t)))
+	 (width (length (aref grid 0)))
+	 (height (length grid)))
+    (when (> (1+ column) (* 2 width))
+      (setq
+       grid
+       (cl-loop for grid-row across grid vconcat
+		(vector (concat grid-row (make-string
+					  (- (ceiling (1+ column) 2) width)
+					  #x2800))))))
+    (when (> (1+ row) (* 4 height))
+      (setq
+       grid
+       (vconcat
+	(cl-loop for i from 0 to (- (ceiling (1+ row) 4) height)
+		 vconcat
+		 (vector (make-string (length (aref grid 0))
+				      #x2800)))
+	grid)))
+    grid))
+
+(defun drawille-draw-dot (drawille-string x y)
+  "On a DRAWILLE-STRING, update a drawille character at X, Y.
+Coordinates starts at 0, it can accept floats, and coordinates can go outside the length of the current matrix."
+  (let* ((n-x (round x)) (n-y (round y))
+	 (grid (drawille-grid drawille-string n-y n-x))
+	 (inverted-y (- (* 4 (length grid)) n-y 1)) ;Row to ordinate
+	 (grid-row (aref grid (floor inverted-y 4)))
+	 (vector (drawille-char-to-vector
+		  (aref grid-row (floor n-x 2)))))
+    (aset vector (+ (* 2 (% inverted-y 4)) (% n-x 2)) 1)
+    (aset grid-row (floor n-x 2) (drawille-vector-to-char vector))
+    (mapconcat 'concat grid "\n")))
+
+(drawille-draw-dot my-grid 26 35)
+
 ;; TODO Truncate the string if it overflow or automatically detect the
 ;; size if no column argument is given
 (defun drawille-string-list-fill (string-list column)
   "Fill a strings on STRING-LIST up to COLUMN."
-  (cl-loop for string in string-list
-	   collect
+  (cl-loop for string in string-list collect
 	   (substring
 	    (concat string (when (< (length string) column)
 			     (make-string (- column (length string))
