@@ -47,7 +47,9 @@ With the new matrix that can be written as:
 
 * Results
 
-** Convert a small matrix to a char
+** Generate a drawille
+
+*** Convert a small matrix to a char
 
 #+BEGIN_SRC elisp
   (drawille-vector-to-char [0 0 
@@ -58,21 +60,7 @@ With the new matrix that can be written as:
 
 =⡒=
 
-** Convert a matrix portion to a char
-
-#+BEGIN_SRC elisp
-  (drawille-char-at-pos [[0 0 1]
-                         [0 0 1]
-                         [0 0 1]
-                         [0 0 1]
-                         [1 1 1]
-                         [1 1 1]]
-                        1 0)
-#+END_SRC
-
-=⣀=
-
-** Fill a matrix
+*** Fill a matrix
 
 #+BEGIN_SRC elisp
   (drawille-fill-matrix [[1 1]
@@ -87,7 +75,7 @@ With the new matrix that can be written as:
    [0 0]]
 #+END_SRC
 
-** Convert a matrix
+*** Convert a matrix
 
 #+begin_src elisp
 (setq my-grid
@@ -114,15 +102,14 @@ With the new matrix that can be written as:
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]]))
 #+end_src
 
-#+begin_example
-⠀⠀⠀⠀⠀⠀⢠⠒⢄⠀⠀⠀
-⠑⢄⠀⣠⠤⣄⠀⠀⢀⡵⢤⡀
-⠀⠀⢱⠁⢀⠜⣦⢤⡎⠀⡠⢳
-⠀⠀⢸⡠⠋⠀⡇⠀⣇⠜⠁⢸
-⠀⠀⠀⠳⠤⠞⠀⠀⠘⠦⠴⠃
-#+end_example
+#+RESULTS:
+: ⠀⠀⠀⠀⠀⠀⢠⠒⢄⠀⠀⠀
+: ⠑⢄⠀⣠⠤⣄⠀⠀⢀⡵⢤⡀
+: ⠀⠀⢱⠁⢀⠜⣦⢤⡎⠀⡠⢳
+: ⠀⠀⢸⡠⠋⠀⡇⠀⣇⠜⠁⢸
+: ⠀⠀⠀⠳⠤⠞⠀⠀⠘⠦⠴⠃
 
-** Convert a string (current buffer)
+**** Convert a string (current buffer)
 
 #+begin_src elisp
 (drawille-string (buffer-string) 80)
@@ -185,17 +172,39 @@ With the new matrix that can be written as:
 ⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠷⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠤⠤⠤⠀⠀⠀
 #+end_example
 
-** Drawing a point to an existing drawille
+** Drawing on an existing drawille
+
+*** Drawing a point
 
 #+begin_src elisp
 (setq my-grid (drawille-draw-dot my-grid 26 35))
 #+end_src
 
+
 #+begin_example
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢠⠒⢄⠀⠀⠀⠀⠀
+⠑⢄⠀⣠⠤⣄⠀⠀⢀⡵⢤⡀⠀⠀
+⠀⠀⢱⠁⢀⠜⣦⢤⡎⠀⡠⢳⠀⠀
+⠀⠀⢸⡠⠋⠀⡇⠀⣇⠜⠁⢸⠀⠀
+⠀⠀⠀⠳⠤⠞⠀⠀⠘⠦⠴⠃⠀⠀
+#+end_example
+
+*** Drawing a line
+
+#+begin_src elisp
+(setq my-grid (drawille-draw-line my-grid  12 24  20 42))
+#+end_src
+
+#+begin_example
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠆⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⢀⠎⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⡎⠀⠀⠀⠀⠁
+⠀⠀⠀⠀⠀⠀⠀⡜⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⡜⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⢠⠒⢄⠀⠀⠀⠀⠀
 ⠑⢄⠀⣠⠤⣄⠀⠀⢀⡵⢤⡀⠀⠀
