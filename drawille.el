@@ -131,31 +131,6 @@ columns."
 		      (drawille-vector-at-pos matrix (* 4 i) (* 2 j))))
 		    into line finally return (concat line "\n"))))
 
-(setq my-grid
- (drawille-matrix
-  [[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0]
-   [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0]
-   [0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0]
-   [0 0 1 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 1 1 1 1 0 0 0]
-   [0 0 0 1 0 0 1 1 0 0 1 1 0 0 0 0 0 1 1 0 0 1 1 0 0]
-   [0 0 0 0 1 0 1 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 1 0 0]
-   [0 0 0 0 0 1 0 0 0 0 0 1 1 0 0 0 1 0 0 0 0 0 1 1 0]
-   [0 0 0 0 0 1 0 0 0 0 1 0 1 1 1 1 1 0 0 0 0 1 0 1 0]
-   [0 0 0 0 0 1 0 0 0 1 0 0 1 1 0 1 1 0 0 0 1 0 0 1 0]
-   [0 0 0 0 0 1 0 0 1 1 0 0 1 0 0 0 1 0 0 1 1 0 0 1 0]
-   [0 0 0 0 0 1 0 0 1 0 0 0 1 0 0 0 1 0 0 1 0 0 0 1 0]
-   [0 0 0 0 0 1 0 1 0 0 0 0 1 0 0 0 1 0 1 0 0 0 0 1 0]
-   [0 0 0 0 0 1 1 0 0 0 0 0 1 0 0 0 1 1 0 0 0 0 0 1 0]
-   [0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 1 0 0]
-   [0 0 0 0 0 0 1 1 0 0 1 1 0 0 0 0 0 1 1 0 0 1 1 0 0]
-   [0 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 1 1 1 1 0 0 0]]))
-
 (defun drawille-grid (drawille-string row column)
   "Format a DRAWILLE-STRING  into a vector of strings (the grid).
 Its size may be adjusted if so that a dot at (ROW, COLUMN) can be
@@ -167,19 +142,22 @@ displayed."
       (setq
        grid
        (cl-loop for grid-row across grid vconcat
-		(vector (concat grid-row (make-string
-					  (- (ceiling (1+ column) 2) width)
-					  #x2800))))))
+		(vector (concat grid-row
+				(make-string (1+ (- (floor column 2)
+						    width))
+					     #x2800))))))
     (when (> (1+ row) (* 4 height))
       (setq
        grid
        (vconcat
-	(cl-loop for i from 0 to (- (ceiling (1+ row) 4) height)
+	(cl-loop for i from 0 to (- (floor row 4) height)
 		 vconcat
 		 (vector (make-string (length (aref grid 0))
 				      #x2800)))
 	grid)))
     grid))
+
+(drawille-draw-dot "⠀⠀" 4 3)
 
 (defun drawille-draw-dot (drawille-string x y)
   "On a DRAWILLE-STRING, update a drawille character at X, Y.
@@ -193,8 +171,6 @@ Coordinates starts at 0, it can accept floats, and coordinates can go outside th
     (aset vector (+ (* 2 (% inverted-y 4)) (% n-x 2)) 1)
     (aset grid-row (floor n-x 2) (drawille-vector-to-char vector))
     (mapconcat 'concat grid "\n")))
-
-(drawille-draw-dot my-grid 26 35)
 
 ;; TODO Truncate the string if it overflow or automatically detect the
 ;; size if no column argument is given
