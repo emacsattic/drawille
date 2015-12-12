@@ -113,8 +113,8 @@
          (height (length matrix)))
     (if (= (% height 4) 0)
         matrix
-      (vconcat matrix (make-vector (- 4 (% height 4))
-				   (make-vector width 0))))))
+      (vconcat (make-vector (- 4 (% height 4)) (make-vector width 0))
+	       matrix ))))
 
 (defun drawille-matrix (unfilled-matrix)
   "Fill an UNFILLED-MATRIX and subdivides it into a matrix of vector.
@@ -137,7 +137,6 @@ columns."
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-  [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
   [0 0 0 1 1 1 1 0 0 0 0 0 1 1 1 1 1 1 1 1 0]
   [0 0 1 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 1 1 0]
   [0 0 1 1 0 0 1 1 0 0 0 0 1 1 1 0 0 1 1 1 0]
@@ -153,17 +152,20 @@ columns."
   [0 0 1 1 0 0 1 1 0 0 0 0 0 1 1 0 0 1 1 0 0]
   [0 0 0 1 1 1 1 0 0 0 0 0 0 0 1 1 1 1 0 0 0]])
 
-(defun drawille-draw-dot (drawille-string row column)
-  "On a DRAWILLE-STRING, update a drawille character at ROW, COLUMN."
-  (let* ((grid (apply 'vector (split-string drawille-string "\n")))
-	 (target-row (aref grid (floor row 4)))
+(defun drawille-draw-dot (drawille-string x y)
+  "On a DRAWILLE-STRING, update a drawille character at X, Y."
+  (let* ((grid (apply 'vector (split-string drawille-string "\n" t)))
+	 (inverted-y (- (* 4 (length grid)) y 1)) ;Row to ordinate
+	 (row (aref grid (floor inverted-y 4)))
 	 (vector (drawille-char-to-vector
-		  (aref target-row (floor column 2)))))
-    (aset vector (+ (* 2 (% row 4)) (% column 2)) 1)
-    (aset target-row (floor column 2) (drawille-vector-to-char vector))
+		  (aref row (floor x 2)))))
+    (aset vector (+ (* 2 (% inverted-y 4)) (% x 2)) 1)
+    (aset row (floor x 2) (drawille-vector-to-char vector))
     (mapconcat 'concat grid "\n")))
 
-(drawille-draw-dot
+(setq my-grid (drawille-draw-dot my-grid 3 3))
+
+(setq my-grid
  (drawille-matrix
   [[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
@@ -186,7 +188,7 @@ columns."
    [0 0 0 0 0 1 1 0 0 0 0 0 1 0 0 0 1 1 0 0 0 0 0 1 0]
    [0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 1 0 0]
    [0 0 0 0 0 0 1 1 0 0 1 1 0 0 0 0 0 1 1 0 0 1 1 0 0]
-   [0 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 1 1 1 1 0 0 0]]) 3 1)
+   [0 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 1 1 1 1 0 0 0]]))
 
 ;; TODO Truncate the string if it overflow or automatically detect the
 ;; size if no column argument is given
