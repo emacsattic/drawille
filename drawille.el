@@ -208,7 +208,7 @@ As vim-minimap does: https://github.com/severin-lemaignan/vim-minimap"
           (replace-regexp-in-string " " (char-to-string 0) string))
          (string-without-non-spaces
           (replace-regexp-in-string
-           (concat "[^\n" (char-to-string 1) " ]")
+           (concat "[^\n" (char-to-string 0) "\s]")
 	   (char-to-string 1) string-without-spaces))
          (string-list
           (split-string string-without-non-spaces "\n"))
