@@ -157,7 +157,8 @@ displayed."
 (defun drawille-draw-dot (drawille x y)
   "On a DRAWILLE string, update a drawille character at X, Y.
 Coordinates starts at 0 at the bottom left, it can accept floats,
-but not negative cordinates.  Although, they can overflow at the rigt and at the top of the current matrix."
+but not negative cordinates.  Although, they can overflow at the
+rigt and at the top of the current matrix."
   (let* ((n-x (round x)) (n-y (round y))
 	 (grid (drawille-grid drawille n-y n-x))
 	 (inverted-y (- (* 4 (length grid)) n-y 1)) ;Row to ordinate
@@ -168,32 +169,38 @@ but not negative cordinates.  Although, they can overflow at the rigt and at the
     (aset grid-row (floor n-x 2) (drawille-vector-to-char vector))
     (mapconcat 'concat grid "\n")))
 
+;; For each step, check wether the offset of not the ruler (eiter x or
+;; y that is iterated one by one with the other that follow) but the
+;; other is greater that 1, and if so, switch the ruler to the other
+;; (either y or x).
+
+;; The standard functions will provide an offset to apply to the
+;; center given a progress parameter these will have to have a
+;; progress argument, and will produce a list of two x and y offsets
+;; to apply to the center (a point).
+
+(cl-loop for x in (number-sequence 0 -10 -1)
+         do
+         (message "Hello %s" x))
+
 (defun drawille-draw-line (drawille x1 y1 x2 y2)
   "On a DRAWILLE string, draw a line from X1, Y1 to X2, Y2."
-  (let ((x-offset (- x2 x1))
-	(y-offset (- y2 y1)))
-    (when (>= (abs x-offset) (abs y-offset))
-      (dolist (x (number-sequence 0 x-offset (signum x-offset)))
-        (setq drawille (drawille-draw-dot
-                        drawille
-                        (+ x1 x)
-                        (+ y1 (if (or (equal 0 x-offset)
-				      (equal 0 y-offset))
-				  0
-				(* x (/ (float y-offset)
-					(float x-offset)))))))))
-    (when (> (abs y-offset) (abs x-offset))
-      (dolist (y (number-sequence 0 y-offset (signum y-offset)))
-        (setq drawille (drawille-draw-dot
-                        drawille
-                        (+ x1 (if (or (equal 0 x-offset)
-                                      (equal 0 y-offset))
-                                  0
-                                (* y (/ (float x-offset)
-                                        (float y-offset)))))
-                        (+ y1 y)))))
-    drawille))
+  (cl-loop
+   with x-offset = (- x2 x1)
+   with y-offset = (- y2 y1)
+   for x in (number-sequence 0 x-offset
+                             (* (cl-signum x-offset)
+                                (min 1 (abs (/ (float x-offset)
+                                               (float y-offset))))))
+   for y in (number-sequence 0 y-offset
+                             (* (cl-signum y-offset)
+                                (min 1 (abs (/ (float y-offset)
+                                               (float x-offset))))))
+   do
+   (setq drawille (drawille-draw-dot drawille (+ x1 x) (+ y1 y)))
+   finally return drawille))
 
+(drawille-draw-line " " 7 10 0 0)
 ;; TODO Truncate the string if it overflow or automatically detect the
 ;; size if no column argument is given
 (defun drawille-string-list-fill (string-list column)
