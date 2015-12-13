@@ -179,28 +179,28 @@ rigt and at the top of the current matrix."
 ;; progress argument, and will produce a list of two x and y offsets
 ;; to apply to the center (a point).
 
-(cl-loop for x in (number-sequence 0 -10 -1)
-         do
-         (message "Hello %s" x))
-
 (defun drawille-draw-line (drawille x1 y1 x2 y2)
   "On a DRAWILLE string, draw a line from X1, Y1 to X2, Y2."
   (cl-loop
    with x-offset = (- x2 x1)
    with y-offset = (- y2 y1)
-   for x in (number-sequence 0 x-offset
-                             (* (cl-signum x-offset)
-                                (min 1 (abs (/ (float x-offset)
-                                               (float y-offset))))))
-   for y in (number-sequence 0 y-offset
-                             (* (cl-signum y-offset)
-                                (min 1 (abs (/ (float y-offset)
-                                               (float x-offset))))))
+   for x in (if (= x-offset 0)
+		(make-list (round y-offset) 0)
+	      (number-sequence 0 x-offset
+			       (* (cl-signum x-offset)
+				  (min 1 (abs (/ (float x-offset)
+						 (float y-offset)))))))
+   for y in (if (= y-offset 0)
+		(make-list (round x-offset) 0)
+	      (number-sequence 0 y-offset
+			       (* (cl-signum y-offset)
+				  (min 1 (abs (/ (float y-offset)
+						 (float x-offset)))))))
    do
    (setq drawille (drawille-draw-dot drawille (+ x1 x) (+ y1 y)))
    finally return drawille))
 
-(drawille-draw-line " " 7 10 0 0)
+(drawille-draw-line " " 0 0 9 0)
 ;; TODO Truncate the string if it overflow or automatically detect the
 ;; size if no column argument is given
 (defun drawille-string-list-fill (string-list column)
