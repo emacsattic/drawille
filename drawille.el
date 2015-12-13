@@ -132,7 +132,7 @@ columns."
 		    into line finally return (concat line "\n"))))
 
 (defun drawille-grid (drawille row column)
-  "Format a DRAWILLE string  into a vector of strings (the grid).
+  "Format a DRAWILLE string into a vector of strings (the grid).
 Its size may be adjusted if so that a dot at (ROW, COLUMN) can be
 displayed."
   (let* ((grid (apply 'vector (split-string drawille "\n" t)))
@@ -140,17 +140,17 @@ displayed."
 	 (height (length grid)))
     (when (> (1+ column) (* 2 width))
       (setq grid
-	    (cl-loop for grid-row across grid vconcat
-		     (vector (concat grid-row
-				     (make-string
-				      (1+ (- (floor column 2) width))
-				      #x2800))))))
+	    (cl-loop
+	     for grid-row across grid vconcat
+	     (vector (concat grid-row (make-string
+				       (1+ (- (floor column 2) width))
+				       #x2800))))))
     (when (> (1+ row) (* 4 height))
       (setq grid
 	    (vconcat
-	     (cl-loop for i from 0 to (- (floor row 4) height) vconcat
-		      (vector (make-string (length (aref grid 0))
-					   #x2800)))
+	     (cl-loop
+	      for i from 0 to (- (floor row 4) height) vconcat
+	      (vector (make-string (length (aref grid 0)) #x2800)))
 	     grid)))
     grid))
 
@@ -169,10 +169,11 @@ rigt and at the top of the current matrix."
     (aset grid-row (floor n-x 2) (drawille-vector-to-char vector))
     (mapconcat 'concat grid "\n")))
 
-;; For each step, check wether the offset of not the ruler (eiter x or
-;; y that is iterated one by one with the other that follow) but the
-;; other is greater that 1, and if so, switch the ruler to the other
-;; (either y or x).
+;; DONE: For each step, check wether the offset of not the ruler
+;; (eiter x or y that is iterated one by one with the other that
+;; follow) but the other is greater that 1, and if so, switch the
+;; ruler to the other (either y or x).  DONE: The drawille-draw-line
+;; will dot this
 
 ;; The standard functions will provide an offset to apply to the
 ;; center given a progress parameter these will have to have a
@@ -181,36 +182,45 @@ rigt and at the top of the current matrix."
 
 (defun drawille-draw-line (drawille x1 y1 x2 y2)
   "On a DRAWILLE string, draw a line from X1, Y1 to X2, Y2."
-  (cl-loop
-   with x-offset = (- x2 x1)
-   with y-offset = (- y2 y1)
-   for x in (if (= x-offset 0)
-		(make-list (round y-offset) 0)
-	      (number-sequence 0 x-offset
-			       (* (cl-signum x-offset)
-				  (min 1 (abs (/ (float x-offset)
-						 (float y-offset)))))))
-   for y in (if (= y-offset 0)
-		(make-list (round x-offset) 0)
-	      (number-sequence 0 y-offset
-			       (* (cl-signum y-offset)
-				  (min 1 (abs (/ (float y-offset)
-						 (float x-offset)))))))
-   do
-   (setq drawille (drawille-draw-dot drawille (+ x1 x) (+ y1 y)))
-   finally return drawille))
+  (cl-loop with x-offset = (- x2 x1)
+	   with y-offset = (- y2 y1)
+	   for x in (if (= x-offset 0)
+			(make-list (round y-offset) 0)
+		      (number-sequence 0 x-offset
+				       (* (cl-signum x-offset)
+					  (min 1 (abs (/ (float x-offset)
+							 (float y-offset)))))))
+	   for y in (if (= y-offset 0)
+			(make-list (round x-offset) 0)
+		      (number-sequence 0 y-offset
+				       (* (cl-signum y-offset)
+					  (min 1 (abs (/ (float y-offset)
+							 (float x-offset)))))))
+	   do
+	   (setq drawille (drawille-draw-dot drawille (+ x1 x) (+ y1 y)))
+	   finally return drawille))
 
-(drawille-draw-line " " 0 0 9 0)
+(defun drawille-plot (drawille &rest values)
+  "On a DRAWILLE string, add a plot representing each of the VALUES.
+The VALUES can be integers or float, positive or negative."
+  (cl-loop for x1 from 0
+	   for x2 from 1 to (length values)
+	   for y1 in values
+	   for y2 in (cdr values)
+	   do
+	   (setq drawille (drawille-draw-line drawille x1 y1 x2 y2)))
+  drawille)
+
 ;; TODO Truncate the string if it overflow or automatically detect the
 ;; size if no column argument is given
 (defun drawille-string-list-fill (string-list column)
   "Fill a strings on STRING-LIST up to COLUMN."
-  (cl-loop for string in string-list collect
-	   (substring
-	    (concat string (when (< (length string) column)
-			     (make-string (- column (length string))
-                                          0)))
-            0 column)))
+  (cl-loop
+   for string in string-list collect
+   (substring (concat string (when (< (length string) column)
+			       (make-string (- column (length string))
+					    0)))
+	      0 column)))
 
 (defun drawille-string (string column)
   "Transform a STRING to a minimap with COLUMN width.

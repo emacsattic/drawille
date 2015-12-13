@@ -213,6 +213,16 @@ With the new matrix that can be written as:
 ⠀⠀⠀⠳⠤⠞⠀⠀⠘⠦⠴⠃⠀⠀
 #+end_example
 
+*** Drawing a plot
+#+begin_src elisp :exprot both
+(drawille-plot "⠀" 8 2 7 4 6 6 7 3 4 3 2 5 4 3 4 3 2 5 6 2 6)
+#+end_src
+
+#+RESULTS:
+: ⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+: ⢇⢧⠖⢇⡀⢠⡀⢠⡀⢠⡆⡆
+: ⠘⠀⠀⠈⠈⠃⠈⠃⠈⠃⠘⠀
+
 * Thanks
 
 To the original drawille authors for the idea and building everything,
