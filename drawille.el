@@ -273,13 +273,13 @@ As vim-minimap does: https://github.com/severin-lemaignan/vim-minimap"
           (split-string string-without-non-spaces "\n"))
          (filled-strings-vector
           (drawille-string-list-fill string-list column)))
-    (drawille-matrix (vconcat filled-strings-vector))))
+    (drawille-from-matrix (vconcat filled-strings-vector))))
 
 ;;;###autoload
 (defun drawille-from-buffer ()
   "Generate a drawille for current buffer."
   (interactive)
-  (message "%s" (drawille-string (buffer-string) fill-column)))
+  (message "%s" (drawille-from-string (buffer-string) fill-column)))
 
 (provide 'drawille)
 ;;; drawille.el ends here
