@@ -109,7 +109,7 @@ This can be used to draw functions curves, like this
 
 *** Convert a matrix
 
-#+begin_src elisp :exports both
+#+begin_src elisp :export both
 (setq my-grid
  (drawille-matrix
   [[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
