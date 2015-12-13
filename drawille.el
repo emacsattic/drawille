@@ -200,16 +200,21 @@ rigt and at the top of the current matrix."
 	   (setq drawille (drawille-draw-dot drawille (+ x1 x) (+ y1 y)))
 	   finally return drawille))
 
-(defun drawille-plot (drawille &rest values)
+(defun drawille-sparkline (&rest values)
   "On a DRAWILLE string, add a plot representing each of the VALUES.
 The VALUES can be integers or float, positive or negative."
-  (cl-loop for x1 from 0
+  (cl-loop with min = (apply 'min values)
+	   with offset = (if (< min 0) (- min) 0)
+	   with drawille = (char-to-string #x2800)
+	   for x1 from 0
 	   for x2 from 1 to (length values)
 	   for y1 in values
 	   for y2 in (cdr values)
 	   do
-	   (setq drawille (drawille-draw-line drawille x1 y1 x2 y2)))
-  drawille)
+	   (setq drawille (drawille-draw-line drawille
+					      x1 (+ y1 offset)
+					      x2 (+ y2 offset)))
+	   finally return drawille))
 
 ;; TODO Truncate the string if it overflow or automatically detect the
 ;; size if no column argument is given
