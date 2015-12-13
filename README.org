@@ -19,7 +19,7 @@ It may not use the most powerful and efficient lisp tools.  I tied to document t
 
 ** Drawing a sparkline plot
 
-#+begin_src elisp :exprot both
+#+begin_src elisp :exports both
 (drawille-draw-sparkline nil 2 -5 4 -9 3 4 20 9 9 -4 4 9 5 3 5 7 -2 5 4)
 #+end_src
 
@@ -70,19 +70,16 @@ producinq a circle as an example:
 #+begin_src elisp :exports both
   (defun my-sin-function ()
     "Demo circle function."
-    (cl-loop for x from 0 to 63 collect (list (* 10 (sin (* 0.1 x)))
-                                              (* 10 (cos (* 0.1 x))))))
+    (cl-loop for x from 0 to 63 collect (list (* 5 (sin (* 0.2 x)))
+                                              (* 5 (cos (* 0.2 x))))))
 
   (apply 'drawille-draw-path nil (my-sin-function))
 #+end_src
 
 #+RESULTS:
-: ⠀⠀⠀⢀⣀⣀⣀⠀⠀⠀⠀
-: ⠀⡠⠊⠁⠀⠀⠀⠉⠢⡀⠀
-: ⡜⠀⠀⠀⠀⠀⠀⠀⠀⠙⡄
-: ⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇
-: ⠱⡀⠀⠀⠀⠀⠀⠀⠀⡸⠀
-: ⠀⠉⠒⢄⣀⣀⡠⠤⠊⠀⠀
+: ⢀⠴⠒⠲⢄⠀
+: ⡏⠀⠀⠀⠈⡇
+: ⠙⢤⣀⣀⠔⠁
 
 ** Convert a matrix
 
