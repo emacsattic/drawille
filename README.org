@@ -68,18 +68,28 @@ Just like sparklines, this can be used to draw functions curves,
 producinq a circle as an example:
 
 #+begin_src elisp :exports both
-  (defun my-sin-function ()
+  (defun my-circle-function ()
     "Demo circle function."
-    (cl-loop for x from 0 to 63 collect (list (* 5 (sin (* 0.2 x)))
-                                              (* 5 (cos (* 0.2 x))))))
+    (cl-loop for x from 0 to 128 collect (list (* 20 (sin (* 0.05 x)))
+                                               (* 20 (cos (* 0.05 x))))))
 
-  (apply 'drawille-draw-path nil (my-sin-function))
+  (apply 'drawille-draw-path nil (my-circle-function))
 #+end_src
 
 #+RESULTS:
-: ⢀⠴⠒⠲⢄⠀
-: ⡏⠀⠀⠀⠈⡇
-: ⠙⢤⣀⣀⠔⠁
+#+begin_example
+⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢀⡠⠔⠊⠉⠀⠀⠀⠀⠈⠉⠒⠦⡀⠀⠀⠀⠀
+⠀⠀⡠⠊⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠣⡀⠀⠀
+⢀⡜⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⡄⠀
+⡸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⡀
+⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇
+⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇
+⠸⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡸⠀
+⠀⠱⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡰⠁⠀
+⠀⠀⠈⠦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠎⠁⠀⠀
+⠀⠀⠀⠀⠈⠑⠢⠤⣀⣀⣀⣀⡠⠤⠒⠉⠀⠀⠀⠀⠀
+#+end_example
 
 ** Convert a matrix
 
