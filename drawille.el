@@ -260,7 +260,7 @@ Coordinates are multiple lists in the form (X Y)."
                                             0)))
               0 column)))
 
-(defun drawille-from-string (string column)
+(defun drawille-from-string (string &optional column)
   "Transform a STRING to a minimap with COLUMN width.
 As vim-minimap does: https://github.com/severin-lemaignan/vim-minimap"
   (let* ((string-without-spaces
@@ -272,7 +272,9 @@ As vim-minimap does: https://github.com/severin-lemaignan/vim-minimap"
          (string-list
           (split-string string-without-non-spaces "\n"))
          (filled-strings-vector
-          (drawille-string-list-fill string-list column)))
+          (drawille-string-list-fill
+	   string-list (or column
+			   (string-bytes (first string-list))))))
     (drawille-from-matrix (vconcat filled-strings-vector))))
 
 ;;;###autoload
@@ -280,6 +282,47 @@ As vim-minimap does: https://github.com/severin-lemaignan/vim-minimap"
   "Generate a drawille for current buffer."
   (interactive)
   (message "%s" (drawille-from-string (buffer-string) fill-column)))
+
+(defun drawille-from-image (path &optional imagemagick-arguments)
+  "Generate a drawille by converting PATH image to B&W bitmap.
+It will use ImageMagick, that is already used by Emacs.  You can
+provide aditionnal IMAGEMAGICK-ARGUMENTS as a string.  As an
+example:
+
+ - \"-gamma 10\": This may help increase the visibility of the
+   content of the image.
+
+- \"-level 23%,24%\": This sets the minimal white value and the
+  maximal black value for the converted image.
+
+- \"-negate\": This permit to invert the black and white.
+
+- \"-auto-level\": If you are feeling lucky.
+
+- \"-ordered-dither DITHER_METHOD\" Grayscale emulation in bitmaps.
+
+  Dither methods: \"threshold\", \"checks\", \"oNxN\" with N an
+  integer, etc.
+
+- \"-dither DITHER_METHOD\": Like ordered-dither, with an attempt
+  to improve the pixel repartition.
+
+  Dither methods: \"Riemersma\", \"FloydSteinberg\", etc.
+
+- \"-resize\ NxN\", with each N an integer: Resize to size NxN, but keeping the proportions.
+
+There  other methods at http://www.imagemagick.org/Usage/quantize/"
+  (with-temp-buffer
+    (shell-command
+     (concat "convert " path " -compress none "
+	     imagemagick-arguments " pbm:-")
+     (current-buffer))
+    (kill-line 2)
+    (drawille-from-string
+     (replace-regexp-in-string
+      "0" " "
+      (replace-regexp-in-string
+       " " "" (buffer-string))))))
 
 (provide 'drawille)
 ;;; drawille.el ends here
