@@ -7,7 +7,7 @@
 ;; Version: 0.1
 ;; Keywords: graphics
 ;; URL: https://github.com/sshbio/elisp-drawille
-;; Package-Requires: ((cl-lib "0.5"))
+;; Package-Requires: ((cl-lib "0.5") (lisp-float-type ))
 
 ;; This file is not part of GNU Emacs.
 ;; However, it is distributed under the same license.
@@ -65,6 +65,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'lisp-float-type)
 
 (defconst drawille-braille-unicode-offset #x2800
   "Offset to reach the first braille char in unicode encoding.")
@@ -222,7 +223,7 @@ The VALUES can be integers or float, positive or negative."
            finally return drawille))
 
 (defun drawille-draw-path (drawille &rest coordinates)
-  "On a DRAWILLE draw a path for each COORDINATES.
+  "On a DRAWILLE string, draw a path for each COORDINATES.
 Coordinates are multiple lists in the form (X Y)."
   (cl-loop with drawille = (if (not drawille) (char-to-string #x2800)
                              drawille)
@@ -239,15 +240,24 @@ Coordinates are multiple lists in the form (X Y)."
            for x2 = (car coordinate2)
            for y2 = (cadr coordinate2)
            do
-	   (message "(min: %s %s) (offset: %s %s) (1: %s %s) (2: %s %s)"
-		    x-min y-min x-offset y-offset
-		    (+ x-offset x1) (+ y-offset y1)
-		    (+ x-offset x2) (+ y-offset y2))
 	   (setq drawille (drawille-draw-line
 			   drawille
 			   (+ x-offset x1) (+ y-offset y1)
 			   (+ x-offset x2) (+ y-offset y2)))
 	   finally return drawille))
+
+(defun drawille-draw-circle
+    (drawille radius &optional x-offset y-offset)
+  "On a DRAWILLE string, draw a circle with given RADIUS.
+It will be shifted of X-OFFSET and Y-OFFSET on x and y axis."
+  (apply 'drawille-draw-path drawille
+	 (cl-loop
+	  for x from 0 to (* 2 float-pi radius) collect
+	  (list
+	   (+ (or x-offset 0) radius
+	      (* radius (sin (* (/ 1.0 radius) x))))
+	   (+ (or y-offset 0) radius
+	      (* radius (cos (* (/ 1.0 radius) x))))))))
 
 ;; TODO Truncate the string if it overflow or automatically detect the
 ;; size if no column argument is given
