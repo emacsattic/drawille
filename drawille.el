@@ -7,7 +7,7 @@
 ;; Version: 0.1
 ;; Keywords: graphics
 ;; URL: https://github.com/sshbio/elisp-drawille
-;; Package-Requires: ((cl-lib "0.5") (lisp-float-type ))
+;; Package-Requires: ((cl-lib "0.5"))
 
 ;; This file is not part of GNU Emacs.
 ;; However, it is distributed under the same license.
@@ -81,9 +81,6 @@
            (* dot offset)
            into offsets finally return
            (apply '+ drawille-braille-unicode-offset offsets)))
-
-
-  "Table to convert braille character to coordinates.")
 
 (defun drawille-char-to-vector (char)
   "Translate a braille CHAR to a corresponding vector."
@@ -280,7 +277,7 @@ As vim-minimap does: https://github.com/severin-lemaignan/vim-minimap"
          (filled-strings-vector
           (drawille-string-list-fill
 	   string-list (or column
-			   (string-bytes (first string-list))))))
+			   (string-bytes (cl-first string-list))))))
     (drawille-from-matrix (vconcat filled-strings-vector))))
 
 ;;;###autoload
