@@ -7,7 +7,7 @@
 ;; Version: 0.1
 ;; Keywords: graphics
 ;; URL: https://github.com/sshbio/elisp-drawille
-;; Package-Requires: ((cl-lib "0.5") (lisp-float-type ))
+;; Package-Requires: ((cl-lib "0.5"))
 
 ;; This file is not part of GNU Emacs.
 ;; However, it is distributed under the same license.
