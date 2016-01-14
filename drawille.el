@@ -82,9 +82,7 @@
            into offsets finally return
            (apply '+ drawille-braille-unicode-offset offsets)))
 
-(drawille-vector-to-char [0 1 1 1 0 0 0 0])
 
-(defconst drawille-braille-reverse-table [7 6 5 3 1 4 2 0]
   "Table to convert braille character to coordinates.")
 
 (defun drawille-char-to-vector (char)
@@ -98,8 +96,6 @@
                  (if (< char-offset dot-offset) 0
                    (setq char-offset (- char-offset dot-offset)) 1))
            finally return result))
-
-(drawille-char-to-vector (drawille-vector-to-char [0 1 0 1 1 1 0 0]))
 
 (defun drawille-vector-at-pos (matrix row column)
   "Return a braille char corresponding to MATRIX at ROW, COLUMN."
