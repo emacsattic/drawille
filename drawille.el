@@ -277,7 +277,7 @@ As vim-minimap does: https://github.com/severin-lemaignan/vim-minimap"
          (filled-strings-vector
           (drawille-string-list-fill
 	   string-list (or column
-			   (string-bytes (first string-list))))))
+			   (string-bytes (cl-first string-list))))))
     (drawille-from-matrix (vconcat filled-strings-vector))))
 
 ;;;###autoload
