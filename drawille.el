@@ -82,6 +82,9 @@
            into offsets finally return
            (apply '+ drawille-braille-unicode-offset offsets)))
 
+(defconst drawille-braille-reverse-table [7 6 5 3 1 4 2 0]
+  "Table to convert braille character to coordinates.")
+
 (defun drawille-char-to-vector (char)
   "Translate a braille CHAR to a corresponding vector."
   (cl-loop with char-offset = (- char drawille-braille-unicode-offset)
